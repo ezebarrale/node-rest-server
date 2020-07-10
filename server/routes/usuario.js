@@ -2,10 +2,11 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
 const app = express();
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, function(req, res) {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -39,7 +40,7 @@ app.get('/usuario', function(req, res) {
 })
 
 //Crear nuevos registros
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
 
@@ -82,7 +83,7 @@ app.post('/usuario', function(req, res) {
 })
 
 //PUT actualiza registros
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     //ejemplo: localhost:3000/usuario/jhcfghjsdvjv corresponde a un id el jhcfghjsdvjv
     //se captura con req.params.id el id es el que se recibe de l :id
@@ -109,7 +110,7 @@ app.put('/usuario/:id', function(req, res) {
 
 
 //Delete
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
 
